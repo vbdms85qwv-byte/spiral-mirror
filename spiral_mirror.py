@@ -85,3 +85,161 @@ def _trim_to_words(text: str, max_words: int) -> str:
         return ""
     trimmed = words[:max_words]
     return " ".join(trimmed)
+
+
+# --- Pre-trigger loop interruption module ---
+
+_OVERLOAD_CUES = (
+    "overwhelmed",
+    "too much",
+    "flooded",
+    "drowning",
+    "can't handle",
+    "can't cope",
+    "burnt out",
+    "exhausted",
+    "frayed",
+    "scattered",
+)
+_RUMINATION_CUES = (
+    "can't stop thinking",
+    "looping",
+    "stuck",
+    "spinning",
+    "ruminating",
+    "obsessing",
+    "keeps replaying",
+)
+_HOPELESS_CUES = (
+    "nothing will change",
+    "no way out",
+    "hopeless",
+    "pointless",
+    "never get better",
+    "won't get better",
+)
+_NARROWING_CUES = (
+    "everything feels",
+    "all i can see",
+    "all i see",
+    "tunnel",
+    "narrow",
+    "can't see",
+    "only thing",
+)
+_SELF_HARM_CUES = (
+    "kill myself",
+    "end it",
+    "end my life",
+    "suicide",
+    "i want to die",
+)
+
+_REGULATION_CUES = {
+    "overload": "For 60 seconds, exhale for 6 counts, then inhale for 4 counts.",
+    "rumination": "For 45 seconds, name five objects you can see, one by one.",
+    "hopeless": "For 60 seconds, press your feet into the floor and feel the contact.",
+    "narrowing": "For 60 seconds, slowly widen your gaze to the edges of the room.",
+    "default": "For 60 seconds, place a hand on your chest and feel the rise and fall.",
+}
+
+# --- Spiral Regulation Responses (pre-trigger, non-escalating) ---
+
+_REGULATION_CUES.update({
+    "overload": (
+        "For 60 seconds, exhale slowly for 6 counts, then inhale for 4 counts. "
+        "Let the exhale be longer than the inhale."
+    ),
+    "rumination": (
+        "For 60 seconds, name five objects you can see, one by one, without judging them."
+    ),
+    "hopeless": (
+        "For 60 seconds, press your feet gently into the floor and notice the contact."
+    ),
+    "narrowing": (
+        "For 60 seconds, slowly widen your gaze to the edges of the room."
+    ),
+    "self-harm": (
+        "This feeling is intense but temporary. For 60 seconds, place a hand on your chest and "
+        "feel the rise and fall of your breath."
+    ),
+    "default": (
+        "For 60 seconds, place a hand on your chest and feel the rise and fall of your breath."
+    )
+})
+
+def pre_trigger_loop_interruption(text: str) -> str:
+    """Return a single, calm response that reflects state and offers loop completion.
+
+    This module is pre-emptive: it detects overload and narrowing cues to restore
+    orientation without diagnosing or escalating the narrative.
+    """
+    cleaned = " ".join(text.strip().split())
+    lowered = cleaned.casefold()
+
+    # Detect overload/rumination/hopeless framing to mirror state, not story.
+    signals = {
+        "self_harm": _contains_any(lowered, _SELF_HARM_CUES),
+        "overload": _contains_any(lowered, _OVERLOAD_CUES),
+        "rumination": _contains_any(lowered, _RUMINATION_CUES),
+        "hopeless": _contains_any(lowered, _HOPELESS_CUES),
+        "narrowing": _contains_any(lowered, _NARROWING_CUES),
+    }
+
+    completion = _select_regulation_instruction(signals)
+
+    if _has_any_signal(signals):
+        reflection = _build_state_reflection(signals)
+        closing = _graceful_exit(signals)
+        if closing:
+            return f"{reflection} {completion} {closing}"
+        return f"{reflection} {completion}"
+
+    return completion
+
+
+def _contains_any(text: str, cues: tuple[str, ...]) -> bool:
+    return any(cue in text for cue in cues)
+
+
+def _build_state_reflection(signals: dict[str, bool]) -> str:
+    # Mirror a single state to keep the response pre-narrative.
+    if signals["self_harm"]:
+        state = "in intense distress"
+    elif signals["hopeless"]:
+        state = "tilting toward hopeless framing"
+    elif signals["overload"]:
+        state = "overloaded"
+    elif signals["rumination"]:
+        state = "caught in a loop"
+    elif signals["narrowing"]:
+        state = "narrowing perception"
+    else:
+        state = "activated"
+
+    return f"Your system is {state} right now."
+
+
+def _has_any_signal(signals: dict[str, bool]) -> bool:
+    return any(signals.values())
+
+
+def _graceful_exit(signals: dict[str, bool]) -> str | None:
+    if signals["self_harm"] or signals["hopeless"]:
+        return "If you want, you could reach out to someone you trust."
+    return None
+
+
+def _select_regulation_instruction(signals: dict[str, bool]) -> str:
+    # Offer a single, short loop-completion cue (30–90 seconds).
+    if signals["self_harm"]:
+        return _REGULATION_CUES["self-harm"]
+    if signals["hopeless"]:
+        return _REGULATION_CUES["hopeless"]
+    if signals["overload"]:
+        return _REGULATION_CUES["overload"]
+    if signals["rumination"]:
+        return _REGULATION_CUES["rumination"]
+    if signals["narrowing"]:
+        return _REGULATION_CUES["narrowing"]
+    return _REGULATION_CUES["default"]
