@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔑 The $7 Key: A Quiet Entry</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f5f2;
+      --text: #2c2a27;
+      --muted: #6a6560;
+      --border: #d9d4cd;
+      --button-bg: #f0ece7;
+      --button-text: #2c2a27;
+      --button-hover: #e7e1da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Georgia", "Times New Roman", serif;
+      line-height: 1.6;
+    }
+
+    main {
+      width: 100%;
+      max-width: 540px;
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 500;
+      margin: 0 0 16px;
+    }
+
+    p {
+      margin: 0 0 16px;
+      font-size: 1rem;
+    }
+
+    .cta {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--button-bg);
+      color: var(--button-text);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.2s ease-in-out;
+    }
+
+    .cta a:hover,
+    .cta a:focus {
+      background: var(--button-hover);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 40px 18px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>🔑 The $7 Key: A Quiet Entry.</h1>
+    <p>
+      A short PDF for a gentle pause. It offers a few quiet lines to help awareness
+      soften and settle, without instruction or urgency.
+    </p>
+    <p>
+      If it feels right, you can send $7 and I will reply with the PDF by hand.
+    </p>
+    <div class="cta">
+      <a href="https://venmo.com/placeholder" aria-label="Request the PDF on Venmo">
+        Request the PDF on Venmo
+      </a>
+      <span class="note">Manual delivery after payment.</span>
+    </div>
+  </main>
+</body>
+</html>
