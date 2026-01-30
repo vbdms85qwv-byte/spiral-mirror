@@ -14,7 +14,7 @@ class MirrorResult:
 
 _PATTERN_RULES: tuple[tuple[str, tuple[str, ...], str | None], ...] = (
     (
-        "anxious activation",
+        "anxious energy",
         (
             "anxious",
             "anxiety",
@@ -26,12 +26,12 @@ _PATTERN_RULES: tuple[tuple[str, tuple[str, ...], str | None], ...] = (
             "racing",
             "can't settle",
         ),
-        "If you'd like, try a slow exhale longer than the inhale.",
+        "If you'd like, try a slow exhale that is longer than the inhale.",
     ),
     (
-        "shutdown or numbness",
+        "numb or shut down",
         ("numb", "blank", "shut down", "frozen", "flat", "disconnected"),
-        "If you'd like, notice three things you can see in the room.",
+        "If you'd like, name three things you can see in the room.",
     ),
     (
         "overwhelm",
@@ -39,7 +39,7 @@ _PATTERN_RULES: tuple[tuple[str, tuple[str, ...], str | None], ...] = (
         "If you'd like, feel your feet on the floor for a moment.",
     ),
     (
-        "sadness or heaviness",
+        "sad or heavy",
         ("sad", "heavy", "grief", "down", "tearful", "cry"),
         None,
     ),
@@ -135,17 +135,9 @@ _SELF_HARM_CUES = (
     "i want to die",
 )
 
-_REGULATION_CUES = {
-    "overload": "For 60 seconds, exhale for 6 counts, then inhale for 4 counts.",
-    "rumination": "For 45 seconds, name five objects you can see, one by one.",
-    "hopeless": "For 60 seconds, press your feet into the floor and feel the contact.",
-    "narrowing": "For 60 seconds, slowly widen your gaze to the edges of the room.",
-    "default": "For 60 seconds, place a hand on your chest and feel the rise and fall.",
-}
-
 # --- Spiral Regulation Responses (pre-trigger, non-escalating) ---
 
-_REGULATION_CUES.update({
+_REGULATION_CUES = {
     "overload": (
         "For 60 seconds, exhale slowly for 6 counts, then inhale for 4 counts. "
         "Let the exhale be longer than the inhale."
@@ -160,13 +152,14 @@ _REGULATION_CUES.update({
         "For 60 seconds, slowly widen your gaze to the edges of the room."
     ),
     "self-harm": (
-        "This feeling is intense but temporary. For 60 seconds, place a hand on your chest and "
+        "This feels very hard right now. For 60 seconds, place a hand on your chest and "
         "feel the rise and fall of your breath."
     ),
     "default": (
         "For 60 seconds, place a hand on your chest and feel the rise and fall of your breath."
-    )
-})
+    ),
+}
+
 
 def pre_trigger_loop_interruption(text: str) -> str:
     """Return a single, calm response that reflects state and offers loop completion.
@@ -205,17 +198,17 @@ def _contains_any(text: str, cues: tuple[str, ...]) -> bool:
 def _build_state_reflection(signals: dict[str, bool]) -> str:
     # Mirror a single state to keep the response pre-narrative.
     if signals["self_harm"]:
-        state = "in intense distress"
+        state = "under a lot of strain"
     elif signals["hopeless"]:
-        state = "tilting toward hopeless framing"
+        state = "stuck in a heavy place"
     elif signals["overload"]:
         state = "overloaded"
     elif signals["rumination"]:
         state = "caught in a loop"
     elif signals["narrowing"]:
-        state = "narrowing perception"
+        state = "narrowing"
     else:
-        state = "activated"
+        state = "on edge"
 
     return f"Your system is {state} right now."
 
@@ -226,7 +219,7 @@ def _has_any_signal(signals: dict[str, bool]) -> bool:
 
 def _graceful_exit(signals: dict[str, bool]) -> str | None:
     if signals["self_harm"] or signals["hopeless"]:
-        return "If you want, you could reach out to someone you trust."
+        return "If you want, reach out to someone you trust."
     return None
 
 
