@@ -32,3 +32,7 @@ Example output:
 
 - **Input:** one paragraph of user text (string)
 - **Output:** a short structured reflection (`pattern`, `reflection`, `grounding`)
+
+## Additional framework notes
+
+- `STOP_THE_LOOP_CODEX.md` contains the full "Irradiated Lens Framework" outline (Version 1.0), including mechanisms, detection protocols, regulation methods, application scenarios, and messaging templates.
